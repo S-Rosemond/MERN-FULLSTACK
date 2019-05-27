@@ -4,6 +4,9 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
+// Json web token
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const User = require('../../models/Users.js');
 
 // @route   POST api/users
@@ -46,10 +49,20 @@ router.post(
 			// Encrypt password
 			const salt = await bcrypt.genSalt(10);
 			user.password = await bcrypt.hash(password, salt);
-
+			// Save user
 			await user.save();
-			// Return json web token
-			res.send('User Registered');
+			// Return user with matching id
+			const payload = {
+				user: {
+					id: user.id
+				}
+			};
+			/* Sign takes in a secret from default json
+            third option: expire time 3600 in production. Fourth param is a callback with param: error, token */
+			jwt.sign(payload, config.get('jwtSecret'), { expiresIn: 360000 }, (error, token) => {
+				if (error) throw error;
+				res.json({ token });
+			});
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server error');
