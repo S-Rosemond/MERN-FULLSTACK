@@ -134,4 +134,25 @@ router.get('/user/:user_id', async (req, res) => {
 	}
 });
 
+// @route   Delete api/profile/
+//@ desc    Delete profile, user & post
+//@access   private
+router.delete('/', auth, async (req, res) => {
+	try {
+		//Remove users post
+		//Remove profile
+		await Profile.findOneAndRemove({ user: req.user.id });
+		// Remove user. _id is free id MongoDB creates
+		await User.findOneAndRemove({ _id: req.user.id });
+
+		res.json({ msg: 'User account deleted' });
+	} catch (error) {
+		console.error(error.message);
+		if (error.kind == 'ObjectId') {
+			return res.status(400).json({ msg: 'Profile not found' });
+		}
+		res.status(500).send('Internal Server Error');
+	}
+});
+
 module.exports = router;
