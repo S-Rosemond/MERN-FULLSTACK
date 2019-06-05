@@ -1,4 +1,6 @@
 const express = require('express');
+const request = require('request');
+const config = require('config');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
@@ -290,6 +292,34 @@ router.delete('/education/:edu_id', auth, async (req, res) => {
 	} catch (error) {
 		console.error(error.message);
 		res.status(500).json({ msg: 'Internal Server Error' });
+	}
+});
+
+// @route   GET api/profile/github:username
+//@ desc    Get user repo from github
+//@access   public
+router.get('/github/:username', (req, res) => {
+	const userClientID = config.get('githubClientId');
+	const userSecret = config.get('githubSecret');
+	try {
+		const options = {
+			uri: `https://api.github.com/users/${req.params
+				.username}/repos?per_page=5&sort=created:asc&client_id=${userClientID}&client_secret=${userSecret}`,
+			method: 'GET',
+			headers: { 'user-agent': 'node.js' }
+		};
+
+		request(options, (error, response, body) => {
+			if (error) console.error(error);
+			if (response.statusCode !== 200) {
+				return res.status(404).json({ msg: 'No Github profile found' });
+			}
+
+			res.json(JSON.parse(body));
+		});
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Internal Server Error');
 	}
 });
 
