@@ -210,8 +210,9 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 	try {
 		const profile = await Profile.findOne({ user: req.user.id });
 		const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
-
-		profile.experience.splice(removeIndex, 1);
+		if (removeIndex !== -1) {
+			profile.experience.splice(removeIndex, 1);
+		}
 		await profile.save();
 		res.json(profile);
 	} catch (error) {
@@ -219,5 +220,138 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 		res.status(500).json({ msg: 'Internal Server Error' });
 	}
 });
+
+// Education
+// @route   PUT api/profile/education
+//@ desc    Add profile education
+//@access   private
+router.put(
+	'/education',
+	[
+		auth,
+		[
+			check('school', 'School is required')
+				.not()
+				.isEmpty(),
+			check('degree', 'Degree is required')
+				.not()
+				.isEmpty(),
+			check('fieldofstudy', 'Field of study is required')
+				.not()
+				.isEmpty(),
+			check('from', 'From date is required')
+				.not()
+				.isEmpty()
+		]
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		const { school, degree, fieldofstudy, from, to, current, description } = req.body;
+
+		const newEdu = {
+			school,
+			degree,
+			fieldofstudy,
+			from,
+			to,
+			current,
+			description
+		};
+
+		try {
+			const profile = await Profile.findOne({ user: req.user.id });
+
+			profile.education.unshift(newEdu);
+			await profile.save();
+			res.json(profile);
+		} catch (error) {
+			console.error(error.message);
+			res.status(500).send('Internal Server Error');
+		}
+	}
+);
+
+// @route   Delete api/profile/education/:edu_id
+//@ desc    Delete profile education
+//@access   private
+router.delete('/education/:edu_id', auth, async (req, res) => {
+	try {
+		const profile = await Profile.findOne({ user: req.user.id });
+		const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.edu_id);
+		if (removeIndex !== -1) {
+			profile.education.splice(removeIndex, 1);
+		}
+		await profile.save();
+		res.json(profile);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).json({ msg: 'Internal Server Error' });
+	}
+});
+
+// Not covered in course
+// @route   Put api/profile/expierence/:exp_id
+//@ desc    Update existing profile expierence
+//@access   private
+router.put('/experience/:exp_id', auth, async (req, res) => {
+	const { title, company, location, from, to, current, description } = req.body;
+
+	const newExp = {
+		title,
+		company,
+		location,
+		from,
+		to,
+		current,
+		description
+	};
+	try {
+		const profile = await Profile.findOneAndUpdate({ user: req.user.id });
+
+		const index = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
+
+		if (index !== -1) {
+			if (!newExp.from) {
+				newExp.from = profile.experience[index].from;
+			}
+			if (newExp.to) {
+				newExp.current = false;
+			}
+			profile.experience.splice(index, 1, newExp);
+			await profile.save();
+
+			res.json(profile);
+		}
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Internal Server Error');
+	}
+});
+/* I manually tested this but I am not sure if splicing is the best solution since it creates a new objectId for example:
+
+current:true
+_id: !! this changed, I am keeping it hidden as a habit to develop
+title:"self taught developer"
+company:"Iris Inovations imaging solutions"
+location:"Home, NY"
+from: 2019-01-01T05:00:00.000+00:00
+description:" self initiated projects"
+
+changed to:
+"current": false,
+            "_id": totally different id: 
+            "title": "self taught developer",
+            "company": "Iris Inovations imaging solutions",
+            "location": "Home, NY",
+            "from": "2019-01-01T05:00:00.000Z",
+            "to": "2019-06-05T04:00:00.000Z",
+            "description": " self initiated projects"
+
+It is somewhat the functionality I want but I am not sure if the id should keep changing, it doesn't make sense to me. I have an Idea of how to keep the same id but I don't know if that is a security issue either. the education would be the same func.
+*/
 
 module.exports = router;
