@@ -57,4 +57,5 @@ const PostSchema = new Schema({
 	}
 });
 
+// Note: convention from another tutorial is to use Uppercase for model name. This course uses lowercase, but also sets the model to the Uppercase exported variable. Keeping everything as is to prevent confusion.
 module.exports = Post = mongoose.model('post', PostSchema);
