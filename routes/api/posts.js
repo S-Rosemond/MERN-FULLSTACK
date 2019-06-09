@@ -74,17 +74,46 @@ router.get('/:id', auth, async (req, res) => {
 		const post = await Post.findById(req.params.id).sort({ date: -1 });
 
 		if (!post) {
-			res.status(404).json({ msg: 'Error 404: Post not found' });
+			return res.status(404).json({ msg: 'Error 404: Post not found' });
 		}
 
 		res.json(post);
 	} catch (error) {
 		console.error(error.message);
 		if (error.kind === 'ObjectId') {
-			res.status(404).json({ msg: 'Error 404: Post not found' });
+			return res.status(404).json({ msg: 'Error 404: Post not found' });
 		}
 
 		res.satus(500).send('Internal Server Error');
+	}
+});
+
+// @route   Delet api/posts/:id
+//@ desc    Delete Post by id
+//@access   Private
+router.delete('/:id', auth, async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+
+		// If post == 404
+		if (!post) {
+			return res.status(404).json({ msg: 'Post not found' });
+		}
+
+		// Check user
+		if (post.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Unauthorized Access' });
+		}
+
+		await post.remove();
+
+		res.json({ msg: 'Post deletion successful' });
+	} catch (error) {
+		console.error(error.message);
+		if (error.kind === 'ObjectId') {
+			return res.status(404).json({ msg: 'Error 404: Post not found' });
+		}
+		res.status(500).send('Internal Server Error');
 	}
 });
 
