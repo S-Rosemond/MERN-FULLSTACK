@@ -117,6 +117,72 @@ router.delete('/:id', auth, async (req, res) => {
 	}
 });
 
+// @route   put api/posts/like/:id
+//@ desc   	Like a post
+//@access   Private
+
+router.put('/like/:id', auth, async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+
+		// Check if post has already been liked by this user
+		/* 
+		Filter returns an array with matching criterion/critera || empty array if no match found
+
+		Explanation for self since I didn't write the code logic, I make sure I understand the logic and decision choice.
+		*/
+		if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+			return res.status(400).json({ msg: 'Post already liked' });
+		}
+		/*
+		 Not covered in course but option:
+		 prevent the user of a post to like their own post.
+
+		 Manually tested: working. 
+		 */
+		if (post.user.toString() === req.user.id) {
+			/* return || return with a message depends on functionality wanted */
+			return res.status(404).json({ msg: "Can't like your own post" });
+		}
+
+		// Could push but course uses unshift
+		post.likes.unshift({ user: req.user.id });
+		await post.save();
+		res.json(post.likes);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Internal Server Error');
+	}
+});
+
+//-----------------------------------------------------------
+// @route   put api/posts/unlike/:id
+//@ desc   	Unlike a post
+//@access   Private
+
+router.put('/unlike/:id', auth, async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+
+		// Check if post has already been liked
+		if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+			return res.status(400).json({ msg: 'Post has not been liked' });
+		}
+
+		// Get remove index
+		const removeIndex = post.likes.map(like => like.user.toString().indexOf(req.user.id));
+
+		post.likes.splice(removeIndex, 1);
+
+		await post.save();
+		res.json(post.likes);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Internal Server Error');
+	}
+});
+
+//==============================================================
 // Not covered in course
 // @route   put api/posts/:id
 //@ desc   	Update Post by id
@@ -148,6 +214,7 @@ router.put(
 			res.json(changedPost);
 		} catch (error) {
 			console.error(error.message);
+			res.status(500).send('Internal Server Error');
 		}
 	}
 );
