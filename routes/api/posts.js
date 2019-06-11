@@ -117,4 +117,39 @@ router.delete('/:id', auth, async (req, res) => {
 	}
 });
 
+// Not covered in course
+// @route   put api/posts/:id
+//@ desc   	Update Post by id
+//@access   Private
+router.put(
+	'/:id',
+	[
+		auth,
+		[
+			check('text', 'Text is required')
+				.not()
+				.isEmpty()
+		]
+	],
+	async (req, res) => {
+		/* 
+			This keeps the same _id instead of splicing the doc and inserting a replacement which would generate a new _id which I did in the profile version. Since this uses auth, someone would need to know your password, etc for this to be a security risk. I'll leave the profile version since I am learning atm but I wouldn't use that method in prod.
+			
+			SAM USE THIS METHOD TO EDIT POST, PROFILE ETC!
+		*/
+		try {
+			const post = await Post.findById({ _id: req.params.id });
+
+			if (!post) {
+				return res.status(404).json({ msg: 'Post not found' });
+			}
+			post.text = req.body.text;
+			const changedPost = await post.save();
+			res.json(changedPost);
+		} catch (error) {
+			console.error(error.message);
+		}
+	}
+);
+
 module.exports = router;
