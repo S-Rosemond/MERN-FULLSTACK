@@ -40,11 +40,11 @@ router.post(
 		} catch (error) {
 			console.error(error.message);
 
-			res.satus(500).send('Internal Server Error');
+			res.status(500).send('Internal Server Error');
 		}
 	}
 );
-
+//-------------------------------------------------------------
 // @route   GET api/posts
 //@ desc    GET all Post
 //@access   Private
@@ -61,10 +61,10 @@ router.get('/', auth, async (req, res) => {
 	} catch (error) {
 		console.error(error.message);
 
-		res.satus(500).send('Internal Server Error');
+		res.status(500).send('Internal Server Error');
 	}
 });
-
+//--------------------------------------------------------------
 // @route   GET api/posts/:id
 //@ desc    GET Post by id
 //@access   Private
@@ -84,10 +84,10 @@ router.get('/:id', auth, async (req, res) => {
 			return res.status(404).json({ msg: 'Error 404: Post not found' });
 		}
 
-		res.satus(500).send('Internal Server Error');
+		res.status(500).send('Internal Server Error');
 	}
 });
-
+//--------------------------------------------------------------
 // @route   Delet api/posts/:id
 //@ desc    Delete Post by id
 //@access   Private
@@ -116,7 +116,7 @@ router.delete('/:id', auth, async (req, res) => {
 		res.status(500).send('Internal Server Error');
 	}
 });
-
+//--------------------------------------------------------------
 // @route   put api/posts/like/:id
 //@ desc   	Like a post
 //@access   Private
@@ -154,7 +154,6 @@ router.put('/like/:id', auth, async (req, res) => {
 		res.status(500).send('Internal Server Error');
 	}
 });
-
 //-----------------------------------------------------------
 // @route   put api/posts/unlike/:id
 //@ desc   	Unlike a post
@@ -181,7 +180,93 @@ router.put('/unlike/:id', auth, async (req, res) => {
 		res.status(500).send('Internal Server Error');
 	}
 });
+//--------------------------------------------------------------
+// @route   Post api/post/comment/:id
+//@ desc    Create a Post
+//@access   Private
+router.post(
+	'/comment/:id',
+	[
+		auth,
+		[
+			check('text', 'No empty comments')
+				.not()
+				.isEmpty()
+		]
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
 
+		try {
+			const user = await User.findById(req.user.id).select('-password');
+			const post = await Post.findById(req.params.id);
+
+			const newComment = {
+				text: req.body.text,
+				name: user.name,
+				avatar: user.avatar,
+				user: req.user.id
+			};
+			post.comments.unshift(newComment);
+			await post.save();
+
+			res.json(post.comments);
+		} catch (error) {
+			console.error(error.message);
+
+			res.status(500).send('Internal Server Error');
+		}
+	}
+);
+//--------------------------------------------------------------
+// @route   Delete api/posts/comment/:id
+//@ desc   	Delete a comment
+//@access   Private
+router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
+	try {
+		// Get post by id first
+		const post = await Post.findById(req.params.id);
+
+		// Pull comment out | find() high order func
+		const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+		/*
+		console.log(comment); 
+		returns Object {
+			date,
+			_id,
+			text,
+			name,
+			avatar,
+			user
+		}
+
+		basically the comment matching requested id
+		
+		
+		*/
+		// Make sure comment exists
+		if (!comment) {
+			return res.status(404).json({ msg: 'Comment does not exist' });
+		}
+		// Check user is same that made comment
+		if (comment.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Unauthorized User request' });
+		}
+		// Remove the comment
+		/* course version was incorrect not sure if it was fixed later on, it deleted the last posted comment which was the first one in the array. This was one of the suggested solutions: calling remove(). */
+		comment.remove();
+		// Await save
+		await post.save();
+		// Return comments
+		res.json(post.comments);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Internal Server Error');
+	}
+});
 //==============================================================
 // Not covered in course
 // @route   put api/posts/:id
@@ -218,5 +303,53 @@ router.put(
 		}
 	}
 );
+//--------------------------------------------------------------
+// @route   update api/posts/comment/:id
+//@ desc   	update a comment
+//@access   Private
+router.put('/comment/:id/:comment_id', auth, async (req, res) => {
+	try {
+		// Get post by id first
+		const post = await Post.findById(req.params.id);
+
+		// Pull comment out
+		const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+		// Make sure comment exists
+		if (!comment) {
+			return res.status(404).json({ msg: 'Comment does not exist' });
+		}
+		// Check user is same that made comment
+		if (comment.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Unauthorized User request' });
+		}
+
+		comment.text = req.body.text;
+		/* 
+		console.log('comment :', '\n', comment); 
+		updates: Object 
+		{
+			date,
+			_id,
+			text,
+			name,
+			avatar,
+			user
+
+		}
+		
+		*/
+		// Get index
+		const index = post.comments.map(comment => comment._id.toString().indexOf(req.params.comment_id));
+		// set comment
+		post.comments[index] = comment;
+		// Await save
+		await post.save();
+		// Return comments
+		res.json(post.comments);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Internal Server Error');
+	}
+});
 
 module.exports = router;
