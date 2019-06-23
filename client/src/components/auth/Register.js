@@ -19,9 +19,6 @@ const Register = ({ setAlert, register }) => {
 	*/
 	const changed = event => setFormData({ ...formData, [event.target.name]: event.target.value });
 
-	// Personal test: useEffect / side effect
-	//useEffect(() => console.log(formData), [formData]);
-
 	// form submit func
 	const submitForm = event => {
 		event.preventDefault();
