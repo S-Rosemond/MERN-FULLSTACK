@@ -11,7 +11,6 @@ export const getCurrentProfile = () => async dispatch => {
 			type: GET_PROFILE,
 			payload: res.data
 		});
-		console.log('Called');
 	} catch (error) {
 		dispatch({
 			type: PROFILE_ERROR,

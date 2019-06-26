@@ -102,4 +102,6 @@ export const login = (email, password) => async dispatch => {
 export const logout = () => dispatch => {
 	localStorage.removeItem('token');
 	dispatch({ type: LOGOUT });
+	// Course dispatched CLEAR_PROFILE HERE
+	// I used LOGOUT in profile and set profile to intial state
 };
