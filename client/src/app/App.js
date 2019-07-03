@@ -8,6 +8,7 @@ import Alerts from './../components/Utils/alerts/Alerts';
 import Dashboard from './../components/Layout/Dashboard/Dashboard';
 import PrivateRoute from '../components/routing/PrivateRoute';
 import CreateProfile from './../components/Layout/Profile-Form/CreateProfile';
+import EditProfile from './../components/Layout/Profile-Form/EditProfile';
 // Redux
 import { Provider } from 'react-redux';
 import store from '../Store/store';
@@ -35,6 +36,7 @@ const App = () => {
 							<Route exact path="/register" component={Register} />
 							<PrivateRoute exact path="/dashboard" component={Dashboard} />
 							<PrivateRoute exact path="/create-profile" component={CreateProfile} />
+							<PrivateRoute exact path="/edit-profile" component={EditProfile} />
 						</Switch>
 					</section>
 				</React.Fragment>
