@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { createProfile } from '../../../actions/profile';
 
-const CreateProfile = props => {
+const CreateProfile = ({ createProfile, history }) => {
 	const [displaySocial, toggleSocial] = useState(false);
 	const [formData, setFormData] = useState({
 		company: '',
@@ -36,6 +38,11 @@ const CreateProfile = props => {
 
 	const change = event => setFormData({ ...formData, [event.target.name]: event.target.value });
 
+	const submitForm = event => {
+		event.preventDefault();
+		createProfile(formData, history);
+	};
+
 	return (
 		<React.Fragment>
 			<h1 className="large text-primary">Create Your Profile</h1>
@@ -43,7 +50,7 @@ const CreateProfile = props => {
 				<i className="fas fa-user-circle" /> Let's get some information to make your profile stand out
 			</p>
 			<small>* = required field</small>
-			<form className="form">
+			<form className="form" onSubmit={event => submitForm(event)}>
 				<div className="form-group">
 					<select name="status" value={status} onChange={event => change(event)}>
 						<option value="0">* Select Professional Status</option>
@@ -190,6 +197,8 @@ const CreateProfile = props => {
 	);
 };
 
-CreateProfile.propTypes = {};
+CreateProfile.propTypes = {
+	createProfile: PropTypes.func.isRequired
+};
 
-export default connect()(CreateProfile);
+export default connect(null, { createProfile })(withRouter(CreateProfile));
