@@ -5,6 +5,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/Users');
+const Post = require('../../models/Post.js');
 const { check, validationResult } = require('express-validator/check');
 
 // @route   GET api/profile/me
@@ -142,6 +143,7 @@ router.get('/user/:user_id', async (req, res) => {
 router.delete('/', auth, async (req, res) => {
 	try {
 		//Remove users post
+		await Post.deleteMany({ user: req.user.id });
 		//Remove profile
 		await Profile.findOneAndRemove({ user: req.user.id });
 		// Remove user. _id is free id MongoDB creates
@@ -283,7 +285,7 @@ router.put(
 router.delete('/education/:edu_id', auth, async (req, res) => {
 	try {
 		const profile = await Profile.findOne({ user: req.user.id });
-		const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.edu_id);
+		const removeIndex = profile.education.map(item => item.id).indexOf(req.params.edu_id);
 		if (removeIndex !== -1) {
 			profile.education.splice(removeIndex, 1);
 		}

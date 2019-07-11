@@ -1,4 +1,4 @@
-import { GET_PROFILE, PROFILE_ERROR, LOGOUT, UPDATE_PROFILE } from '../actions/types';
+import { GET_PROFILE, PROFILE_ERROR, LOGOUT, UPDATE_PROFILE, CLEAR_PROFILE, ACCOUNT_DELETED } from '../actions/types';
 
 const initialState = {
 	profile: null,
@@ -26,8 +26,14 @@ export default function(state = initialState, action) {
 				loading: false
 			};
 		case LOGOUT:
+		case ACCOUNT_DELETED:
 			return initialState;
-
+		case CLEAR_PROFILE:
+			return {
+				...state,
+				error: payload,
+				loading: false
+			};
 		default:
 			return state;
 	}

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { setAlert } from './alert';
-
-import { GET_PROFILE, PROFILE_ERROR, UPDATE_PROFILE } from './types';
+import { GET_PROFILE, PROFILE_ERROR, UPDATE_PROFILE, CLEAR_PROFILE, ACCOUNT_DELETED } from './types';
 
 // Get current users profile
 export const getCurrentProfile = () => async dispatch => {
@@ -112,5 +111,75 @@ export const addEducation = (formData, history) => async dispatch => {
 			type: PROFILE_ERROR,
 			payload: { msg: error.response.statusText, status: error.response.status }
 		});
+	}
+};
+
+// Delete experience
+
+export const deleteExperience = id => async dispatch => {
+	try {
+		const res = await axios.delete(`api/profile/experience/${id}`);
+
+		dispatch({
+			type: UPDATE_PROFILE,
+			payload: res.data
+		});
+		dispatch(setAlert('Experience Removed', 'success'));
+	} catch (error) {
+		console.log(error.response);
+		dispatch({
+			type: PROFILE_ERROR,
+			payload: {
+				msg: error.response.statusText,
+				status: error.response.status
+			}
+		});
+	}
+};
+// Delete Education
+export const deleteEducation = id => async dispatch => {
+	try {
+		const res = await axios.delete(`api/profile/education/${id}`);
+
+		dispatch({
+			type: UPDATE_PROFILE,
+			payload: res.data
+		});
+		dispatch(setAlert('Education Removed', 'success'));
+	} catch (error) {
+		dispatch({
+			type: PROFILE_ERROR,
+			payload: {
+				msg: error.response.statusText,
+				status: error.response.status
+			}
+		});
+	}
+};
+
+// Delete Account :  should be delete account profile
+
+export const deleteAccount = () => async dispatch => {
+	if (window.confirm('This action CANNOT be undone. Are you sure you want to delete your account?')) {
+		try {
+			const res = await axios.delete(`api/profile/`);
+
+			dispatch({
+				type: CLEAR_PROFILE,
+				payload: res.data
+			});
+			dispatch({
+				type: ACCOUNT_DELETED
+			});
+			dispatch(setAlert('Account Successfully Deleted', 'success'));
+		} catch (error) {
+			dispatch({
+				type: PROFILE_ERROR,
+				payload: {
+					msg: error.response.statusText,
+					status: error.response.status
+				}
+			});
+		}
 	}
 };

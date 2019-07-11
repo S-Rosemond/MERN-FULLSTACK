@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import DashboardActions from './DashboardActions';
 import Experience from './Experience';
 import Education from './Education';
+import Account from './Account';
 
 const Dashcomp = ({ user, profile, loading }) => {
 	const noProfile = (
@@ -14,11 +15,17 @@ const Dashcomp = ({ user, profile, loading }) => {
 		</React.Fragment>
 	);
 
+	/*
+	 Had to do this weird fix, issue wasn't covered in tutorial. Plus I deviated a bit in my implementation... Basically, when a new user registerd, the profile was null so profile.experience and .education was also null causing a crash. So I figured only add these values if profile is true. I didn't want to over think the fix :/
+	 I could also check the length of experience and education, etc, but
+	 :/
+	*/
 	const hasProfile = (
 		<React.Fragment>
 			<DashboardActions />
-			<Experience experience={profile.experience} />
-			<Education education={profile.education} />
+			<Experience experience={profile && profile.experience} />
+			<Education education={profile && profile.education} />
+			<Account acount={profile} />
 		</React.Fragment>
 	);
 
@@ -28,9 +35,14 @@ const Dashcomp = ({ user, profile, loading }) => {
 			<p className="lead">
 				<i className="fas fa-user-circle" /> Welcome {user && user.name}
 			</p>
-			{profile !== null ? hasProfile : noProfile}
+
+			{loading === false && profile !== null ? hasProfile : noProfile}
 		</React.Fragment>
 	);
 };
 
 export default Dashcomp;
+
+/*
+Can't delete account without a profile. I Will leave it as is and do something diff on my personal project using what I learn here.
+*/
