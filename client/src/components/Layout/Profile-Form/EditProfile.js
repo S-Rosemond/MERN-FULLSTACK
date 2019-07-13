@@ -42,7 +42,10 @@ const EditProfile = ({ profile: { profile, loading }, createProfile, getCurrentP
 			});
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[loading]
+		[loading, getCurrentProfile]
+		/* 
+		!Important
+		If not disabled intellisense will add other dependencies. The problem is having these other dependencies will allow a different user to see the profile information of the previous user because the useEffect is still firing off if you quickly log out from the edit profile page and log in as a different user. I got lucky while testing out the logic and found this issue while watching Redux.  */
 	);
 
 	const {

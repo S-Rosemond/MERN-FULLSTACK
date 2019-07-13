@@ -203,11 +203,10 @@ export const deleteEducation = id => async dispatch => {
 export const deleteAccount = () => async dispatch => {
 	if (window.confirm('This action CANNOT be undone. Are you sure you want to delete your account?')) {
 		try {
-			const res = await axios.delete(`api/profile/`);
+			await axios.delete(`api/profile/`);
 
 			dispatch({
-				type: CLEAR_PROFILE,
-				payload: res.data
+				type: CLEAR_PROFILE
 			});
 			dispatch({
 				type: ACCOUNT_DELETED
