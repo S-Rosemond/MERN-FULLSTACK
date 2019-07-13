@@ -11,6 +11,12 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
 			!null should be true and nothing gets loaded unitl loading is false and auth is true, I don't think !null is an issue */}
 			<li>{user !== null ? user.name : !null}</li>
 			<li>
+				<Link to="/profiles">
+					<span className="hide-sm m-0">Developers</span>
+					<i className="fas fa-address-book" />
+				</Link>
+			</li>
+			<li>
 				<Link to="/dashboard">
 					<span className="hide-sm m-0">Dashboard</span>
 					<i className="fas fa-user-circle" />
