@@ -5,6 +5,7 @@
 	--light-color: #f4f4f4;
 	--danger-color: #dc3545;
 	--success-color: #28a745;
+	--orange-color: #ff8800;
 }
 
 * {
@@ -24,6 +25,16 @@ body {
 a {
 	color: var(--primary-color);
 	text-decoration: none;
+}
+icons {
+	margin: 0.5em;
+}
+icons i {
+	color: var(--light-color);
+	margin: 0.2em;
+}
+icons i:hover {
+	color: var(--orange-color);
 }
 
 ul {
@@ -69,7 +80,15 @@ img {
 .text-primary {
 	color: var(--primary-color);
 }
-
+.text-light {
+	color: var(--light-color);
+}
+.text-light-orange {
+	color: var(--light-color);
+}
+.text-light-orange:hover {
+	color: var(--orange-color);
+}
 .text-dark {
 	color: var(--dark-color);
 }
