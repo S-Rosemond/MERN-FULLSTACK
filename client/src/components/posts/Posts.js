@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getPosts } from './../../actions/post';
 import Spinners from './../Utils/spinners/Spinners';
+import PostItem from './PostItem';
 
 const Posts = ({ getPosts, posts: { loading, posts } }) => {
 	useEffect(
@@ -12,7 +13,21 @@ const Posts = ({ getPosts, posts: { loading, posts } }) => {
 		[getPosts]
 	);
 
-	return <div>{!loading && posts !== null && console.log(typeof posts)}</div>;
+	return (
+		<div>
+			{loading ? (
+				<Spinners />
+			) : (
+				<React.Fragment>
+					<h1 className="large text-primary">Posts</h1>
+					<p className="lead">
+						<i className="fas fas-user-circle">Welcome to the community</i>
+					</p>
+					{posts.map(post => <PostItem key={post._id} post={post} />)}
+				</React.Fragment>
+			)}
+		</div>
+	);
 };
 
 Posts.propTypes = {

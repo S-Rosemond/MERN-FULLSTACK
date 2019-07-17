@@ -10,7 +10,7 @@ import ProfileExperience from './ProfileExperience';
 import ProfileEducation from './ProfileEducation';
 import ProfileGithub from './ProfileGithub';
 
-const Profile = ({ getProfileById, match, profile: { profile, loading }, auth }) => {
+const Profile = ({ getProfileById, match, profile: { profile, loading }, auth, history }) => {
 	useEffect(
 		() => {
 			getProfileById(match.params.id);
@@ -24,7 +24,7 @@ const Profile = ({ getProfileById, match, profile: { profile, loading }, auth })
 	return (
 		<React.Fragment>
 			{profile === null || loading ? (
-				<Spinners />
+				<Spinners> {console.log(history, loading, profile)} </Spinners>
 			) : (
 				<React.Fragment>
 					<div className="py-1">

@@ -7,7 +7,8 @@ import {
 	CLEAR_PROFILE,
 	ACCOUNT_DELETED,
 	GET_PROFILES,
-	GET_REPOS
+	GET_REPOS,
+	GET_PROFILE_BY_ID
 } from './types';
 
 // Get current users profile
@@ -48,7 +49,7 @@ export const getProfileById = userId => async dispatch => {
 	try {
 		const res = await axios.get(`/api/profile/user/${userId}`);
 		dispatch({
-			type: GET_PROFILE,
+			type: GET_PROFILE_BY_ID,
 			payload: res.data
 		});
 	} catch (error) {

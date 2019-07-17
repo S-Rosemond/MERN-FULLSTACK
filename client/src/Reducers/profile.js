@@ -1,4 +1,5 @@
 import {
+	GET_PROFILE_BY_ID,
 	GET_PROFILE,
 	PROFILE_ERROR,
 	LOGOUT,
@@ -23,6 +24,7 @@ export default function(state = initialState, action) {
 	switch (type) {
 		case GET_PROFILE:
 		case UPDATE_PROFILE:
+		case GET_PROFILE_BY_ID:
 			return {
 				...state,
 				profile: payload,

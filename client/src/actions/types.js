@@ -16,6 +16,8 @@ export const GET_PROFILES = 'GET_PROFILES';
 export const GET_REPOS = 'GET_REPOS';
 export const GET_POSTS = 'GET_POSTS';
 export const POST_ERROR = 'POST_ERROR';
+export const GET_PROFILE_BY_ID = 'GET_PROFILE_BY_ID';
+export const POSTERS = 'POSTERS';
 
 // Course ver diff
 // LOGOUT,
