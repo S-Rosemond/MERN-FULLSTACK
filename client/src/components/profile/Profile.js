@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, Redirect, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Spinners from './../Utils/spinners/Spinners';
 import { getProfileById } from './../../actions/profile';
 import ProfileTop from './ProfileTop';
@@ -91,4 +91,4 @@ const mapStateToProps = state => ({
 	auth: state.auth
 });
 
-export default connect(mapStateToProps, { getProfileById })(withRouter(Profile));
+export default connect(mapStateToProps, { getProfileById })(Profile);
