@@ -18,7 +18,7 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
 			</li>
 			<li>
 				<Link to="/posts">
-					<span className="hide-sm m-0">Posts</span>
+					<span className="hide-sm m-0">Posts</span> <i className='fas fa-thumbtack'></i>
 				</Link>
 			</li>
 			<li>

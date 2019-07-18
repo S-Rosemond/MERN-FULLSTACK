@@ -8,7 +8,9 @@ import {
 	ACCOUNT_DELETED,
 	GET_PROFILES,
 	GET_REPOS,
-	GET_PROFILE_BY_ID
+	GET_PROFILE_BY_ID,
+	PROFILE_BY_ID_ERROR,
+	CURRENT_PROFILE_ERROR
 } from './types';
 
 // Get current users profile
@@ -21,7 +23,7 @@ export const getCurrentProfile = () => async dispatch => {
 		});
 	} catch (error) {
 		dispatch({
-			type: PROFILE_ERROR,
+			type: CURRENT_PROFILE_ERROR,
 			payload: { msg: error.response.statusText, status: error.response.status }
 		});
 	}
@@ -45,7 +47,7 @@ export const getAllProfiles = () => async dispatch => {
 };
 
 // Get profile by id
-export const getProfileById = userId => async dispatch => {
+export const getProfileById = (userId, history) => async dispatch => {
 	try {
 		const res = await axios.get(`/api/profile/user/${userId}`);
 		dispatch({
@@ -54,9 +56,15 @@ export const getProfileById = userId => async dispatch => {
 		});
 	} catch (error) {
 		dispatch({
-			type: PROFILE_ERROR,
+			type: PROFILE_BY_ID_ERROR,
 			payload: { msg: error.response.statusText, status: error.response.status }
 		});
+		/*
+		Not covered in course: MAJOR HEADACHE :
+		if the user doesn't have a profile but posted comments, trying to view their profile was an infinite spinner loop. I tried near a billion clever solutions, some almost working, finally.
+		*/
+		//console.log(history); review history; history === redirect
+		setTimeout(() => history.push('/posts'), 1000);
 	}
 };
 

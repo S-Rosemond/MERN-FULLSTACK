@@ -2,6 +2,8 @@ import {
 	GET_PROFILE_BY_ID,
 	GET_PROFILE,
 	PROFILE_ERROR,
+	PROFILE_BY_ID_ERROR,
+	CURRENT_PROFILE_ERROR,
 	LOGOUT,
 	UPDATE_PROFILE,
 	CLEAR_PROFILE,
@@ -37,6 +39,8 @@ export default function(state = initialState, action) {
 				loading: false
 			};
 		case PROFILE_ERROR:
+		case PROFILE_BY_ID_ERROR:
+		case CURRENT_PROFILE_ERROR:
 			return {
 				...state,
 				error: payload,

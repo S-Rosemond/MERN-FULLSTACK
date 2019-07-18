@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 
-const PostItem = ({ post: { _id, text, name, avatar, user, likes, comments, date }, auth }) => {
+const PostItem = ({ post: { _id, text, name, avatar, user, likes, comments, date }, auth, history }) => {
 	return (
 		<div className="posts">
 			<div className="post bg-white p-1 my-1">

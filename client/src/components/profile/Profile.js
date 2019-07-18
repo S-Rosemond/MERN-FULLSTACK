@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import Spinners from './../Utils/spinners/Spinners';
 import { getProfileById } from './../../actions/profile';
 import ProfileTop from './ProfileTop';
@@ -13,9 +13,9 @@ import ProfileGithub from './ProfileGithub';
 const Profile = ({ getProfileById, match, profile: { profile, loading }, auth, history }) => {
 	useEffect(
 		() => {
-			getProfileById(match.params.id);
+			getProfileById(match.params.id, history);
 		},
-		[getProfileById, match.params.id]
+		[getProfileById, history, match.params.id]
 	);
 	/* 
 	put all jsx in render || return no matter if it looks ulgy, it can retreive values easier.
@@ -24,7 +24,7 @@ const Profile = ({ getProfileById, match, profile: { profile, loading }, auth, h
 	return (
 		<React.Fragment>
 			{profile === null || loading ? (
-				<Spinners> {console.log(history, loading, profile)} </Spinners>
+				<Spinners />
 			) : (
 				<React.Fragment>
 					<div className="py-1">
@@ -91,4 +91,4 @@ const mapStateToProps = state => ({
 	auth: state.auth
 });
 
-export default connect(mapStateToProps, { getProfileById })(Profile);
+export default connect(mapStateToProps, { getProfileById })(withRouter(Profile));
