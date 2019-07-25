@@ -1,11 +1,16 @@
-import { GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST } from './../actions/types';
+import { GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST, ADD_POST } from './../actions/types';
 
 const initialState = {
-	posts: [],
 	post: null,
+	posts: [],
 	loading: true,
 	error: {}
 };
+
+/* 
+for Add post can't do state.posts.push(payload), state.posts becomes a number
+for arrays always spread the ...prevState, then payload || payload, ...prevstate if you want diff display order
+*/
 
 export default function(state = initialState, action) {
 	const { type, payload } = action;
@@ -15,6 +20,12 @@ export default function(state = initialState, action) {
 			return {
 				...state,
 				posts: payload,
+				loading: false
+			};
+		case ADD_POST:
+			return {
+				...state,
+				posts: [payload, ...state.posts],
 				loading: false
 			};
 		case POST_ERROR:

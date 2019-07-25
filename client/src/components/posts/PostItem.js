@@ -8,7 +8,6 @@ import { removeLike, addLikes, deletePost } from './../../actions/post';
 const PostItem = ({
 	post: { _id, text, name, avatar, user, likes, comments, date },
 	auth,
-	history,
 	addLikes,
 	removeLike,
 	deletePost
@@ -22,7 +21,7 @@ const PostItem = ({
 						<h4>{name}</h4>
 					</Link>
 				</div>
-				{/*  */}
+
 				<div>
 					<div className="my-1">
 						<p className="post-date">
