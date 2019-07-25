@@ -10,7 +10,8 @@ const PostItem = ({
 	auth,
 	addLikes,
 	removeLike,
-	deletePost
+	deletePost,
+	showAactions
 }) => {
 	return (
 		<div className="posts">
@@ -31,36 +32,44 @@ const PostItem = ({
 					</div>
 
 					<div>
-						<button className="btn btn-primary" onClick={e => addLikes(_id)}>
-							<i className="fas fa-thumbs-up" />
-							<span> {likes.length > 0 && likes.length}</span>
-						</button>
-						<button
-							className="btn btn-danger"
-							onClick={e => {
-								return removeLike(_id);
-							}}
-						>
-							<i className="fas fa-thumbs-down" />
-						</button>
-
-						{comments.length > 0 && (
-							<Link to={`/post/${_id}`} className="btn btn-light bg-dark">
-								Discussion <span>{comments.length}</span>
-							</Link>
-						)}
-
-						{!auth.loading &&
-							user === auth.user._id && (
-								<button type="button" className="btn btn-danger" onClick={e => deletePost(_id)}>
-									Delete
+						{showAactions && (
+							<React.Fragment>
+								<button className="btn btn-primary" onClick={e => addLikes(_id)}>
+									<i className="fas fa-thumbs-up" />
+									<span> {likes.length > 0 && likes.length}</span>
 								</button>
-							)}
+								<button
+									className="btn btn-danger"
+									onClick={e => {
+										return removeLike(_id);
+									}}
+								>
+									<i className="fas fa-thumbs-down" />
+								</button>
+
+								{comments.length > 0 && (
+									<Link to={`/posts/${_id}`} className="btn btn-light bg-dark">
+										Discussion <span>{comments.length}</span>
+									</Link>
+								)}
+
+								{!auth.loading &&
+									user === auth.user._id && (
+										<button type="button" className="btn btn-danger" onClick={e => deletePost(_id)}>
+											Delete
+										</button>
+									)}
+							</React.Fragment>
+						)}
 					</div>
 				</div>
 			</div>
 		</div>
 	);
+};
+
+PostItem.defaultProps = {
+	showAactions: true
 };
 
 PostItem.propTypes = {
