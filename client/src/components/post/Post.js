@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Spinners from './../Utils/spinners/Spinners';
 import { getPost } from '../../actions/post';
 import PostItem from '../posts/PostItem';
-import PostForm from '../posts/PostForm';
+import CommentForm from './CommentForm';
 
 const Post = ({ getPost, post: { post, loading }, match }) => {
 	useEffect(
@@ -19,10 +19,11 @@ const Post = ({ getPost, post: { post, loading }, match }) => {
 		<Spinners />
 	) : (
 		<React.Fragment>
-			<Link to="/post" className="btn btn-dark">
+			<Link to="/posts" className="btn btn-dark">
 				Back to Post
 			</Link>
 			<PostItem showActions={false} post={post} />
+			<CommentForm postId={post._id} />
 		</React.Fragment>
 	);
 };

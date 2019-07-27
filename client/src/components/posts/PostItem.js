@@ -47,10 +47,19 @@ const PostItem = ({
 									<i className="fas fa-thumbs-down" />
 								</button>
 
-								{comments.length > 0 && (
+								{comments.length > 0 ? (
 									<Link to={`/posts/${_id}`} className="btn btn-light bg-dark">
 										Discussion <span>{comments.length}</span>
 									</Link>
+								) : (
+									user !== auth.user._id && (
+										<Link
+											to={{ pathname: `/posts/${_id}`, show: false }}
+											className="btn btn-primary bg-primary"
+										>
+											Reply
+										</Link>
+									)
 								)}
 
 								{!auth.loading &&
